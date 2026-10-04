@@ -7,6 +7,9 @@ accounts, no internet needed. Just open `index.html`.
 
 ## 🎮 What is it?
 
+> **▶ Play online: [davidcanarnt.github.io/learnpy](https://davidcanarnt.github.io/learnpy/)**
+> *(or download and double-click `index.html` — no install, no internet needed)*
+
 You are shipwrecked on **Snake Island** with **Pip** the python. Fix the Great Bug's chaos
 across **10 worlds and 64 levels**, earning XP, stars, streaks and achievements along the way.
 
@@ -45,7 +48,9 @@ Level types keep it fresh: **write code** (with a real editor), **answer quizzes
 
 ## 🚀 How to run
 
-Double-click **`index.html`** (Chrome, Edge or Firefox). That's it.
+**Play online:** [davidcanarnt.github.io/learnpy](https://davidcanarnt.github.io/learnpy/)
+
+**Or locally:** double-click **`index.html`** (Chrome, Edge or Firefox). That's it.
 Everything — interpreter, levels, styles — is local. No build step, no server, no network.
 
 > Tip: `Ctrl+Enter` runs your code. `Tab` indents, `Shift+Tab` outdents, `Enter` auto-indents.
