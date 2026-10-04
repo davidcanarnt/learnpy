@@ -1,0 +1,90 @@
+# 🐍 LearnPy — Learn Python by Playing
+
+A **self-contained, browser-based game** that teaches you real Python — no installs, no
+accounts, no internet needed. Just open `index.html`.
+
+![LearnPy](https://img.shields.io/badge/python-teaching%20game-22d3ee) ![offline](https://img.shields.io/badge/works-offline-a78bfa)
+
+## 🎮 What is it?
+
+You are shipwrecked on **Snake Island** with **Pip** the python. Fix the Great Bug's chaos
+across **10 worlds and 64 levels**, earning XP, stars, streaks and achievements along the way.
+
+Every level runs your code on a **real Python interpreter built into the page** (a custom,
+sandboxed subset written in JavaScript — see `js/pyengine.js`). If it runs in LearnPy, the
+same code runs in Python 3.
+
+### The worlds
+
+| # | World | You learn |
+|---|-------|-----------|
+| 1 | 🌴 Hello, Snake Island | `print()`, strings, comments, `sep=` |
+| 2 | 📦 Variable Valley | variables, arithmetic, `//` vs `/`, `input()`, `round()` |
+| 3 | 🐚 String Shore | f-strings, methods, indexing, slicing, `replace()` |
+| 4 | 🌊 List Lagoon | lists, indexes, `append`, `sort`, `sum/min/max` |
+| 5 | 🔀 Decision Delta | `if/elif/else`, `and/or`, `in`, `==` vs `=` |
+| 6 | 🌀 Loop Lagoon | `for`, `range()`, `while`, `break`/`continue`, patterns |
+| 7 | ⚙️ Function Falls | `def`, parameters, defaults, `return`, reuse in loops |
+| 8 | 🗝️ Dict Depths | dictionaries, `.get()`, looping `.items()`, vote counter |
+| 9 | 🐢 Turtle Peak | draw with code: squares, spirals, stars, free art |
+| 10 | 👑 The Great Bug | boss fight: debug a broken program, final trial |
+
+Level types keep it fresh: **write code** (with a real editor), **answer quizzes**,
+**re-assemble scrambled programs**, and **fill in the blanks**.
+
+## ✨ Why it's (hopefully) addictive
+
+- 💗 **Hearts** — failed runs cost one; wins restore them
+- 🔥 **Streaks** — consecutive successful runs multiply your XP
+- ⭐ **3-star levels** — first try, no hints
+- 🏆 **15 achievements**, 8 ranks (Byte Rookie → Serpent Master)
+- 🎯 **Challenge of the Day** — a fresh bonus quiz every day
+- 💾 Progress auto-saves in your browser (localStorage)
+- 🎉 Confetti, sound effects (WebAudio), an animated turtle, and a mascot with opinions
+- 🧪 **Sandbox** with turtle graphics + examples — zero grades, pure experiments
+
+## 🚀 How to run
+
+Double-click **`index.html`** (Chrome, Edge or Firefox). That's it.
+Everything — interpreter, levels, styles — is local. No build step, no server, no network.
+
+> Tip: `Ctrl+Enter` runs your code. `Tab` indents, `Shift+Tab` outdents, `Enter` auto-indents.
+
+## 🧠 The Python subset
+
+Supported: variables & assignment (incl. tuple swap), ints/floats/strings/booleans,
+f-strings with format specs, lists, tuples, dicts, `if/elif/else`, `while`, `for … in`,
+`def` with defaults, `return`, `break/continue`, indexing & slicing, comparison/boolean
+operators, the main builtins (`print`, `len`, `range`, `input`, `sorted`, `enumerate`,
+`zip`, …), string/list/dict methods, and `random` / `math` / `turtle` modules.
+
+Deliberately Python-faithful details: `/` always returns a float (`4/2` → `2.0`), `//`
+floors toward negative infinity, `%` follows the divisor's sign, `round()` is banker's
+rounding, dicts preserve insertion order, and `range()` excludes its end.
+
+Not supported (with friendly errors pointing the way): classes, list comprehensions
+(use a loop + `.append()`), `try/except`, `lambda`, sets.
+
+## 📁 Project layout
+
+```
+learnpy/
+├── index.html          ← open this
+├── css/style.css       ← the looks
+├── js/pyengine.js      ← custom Python interpreter (tokenizer → parser → evaluator)
+├── js/turtle.js        ← animated canvas turtle (records ops so levels can check drawings)
+├── js/levels.js        ← curriculum data: worlds, levels, quizzes, achievements
+├── js/game.js          ← game logic: screens, XP, hearts, streaks, sound, confetti
+└── test/               ← 494 automated tests (engine + every level's solution)
+```
+
+## 🧪 Tests
+
+```bash
+node test/run_tests.js    # 161 engine tests
+node test/test_levels.js  # 333 curriculum tests (every solution runs & matches)
+```
+
+---
+
+Made with ❤️, ⚡ and an unreasonable number of 🐍 puns.
