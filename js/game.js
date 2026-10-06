@@ -9,11 +9,14 @@
 
   const $ = s => document.querySelector(s);
   const $$ = s => [...document.querySelectorAll(s)];
-  const D = window.LearnPyData;
+  const I18N = window.LearnPyI18N;
+  const T = (k, v) => I18N.t(k, v);
+  const RawD = window.LearnPyData;
+  let D = RawD;                         // localized bundle, refreshed on language change
   const Py = window.PyEngine;
 
   const SAVE_KEY = 'learnpy_save_v1';
-  const TOTAL_LEVELS = D.allLevels().length;
+  const TOTAL_LEVELS = RawD.allLevels().length;
 
   /* ============================== save state ============================ */
   let save = defaultSave();
@@ -160,7 +163,7 @@
     save.ach.push(id);
     persist();
     Sfx.ach();
-    toast(a.icon, 'Achievement: ' + a.name, a.desc, true);
+    toast(a.icon, T('toast.achievement', { name: a.name }), a.desc, true);
   }
 
   function checkAchAfterRun() {
@@ -205,11 +208,10 @@
   function outOfHearts() {
     const tip = D.TIPS[Math.floor(Math.random() * D.TIPS.length)];
     showInfoModal({
-      title: '💔 Out of hearts!',
-      html: `<div class="sub" style="margin-bottom:12px">Every failed run costs a heart — but hearts come back when you finish levels.<br><br>
-             Meanwhile, here's a tip from Pip to keep your streak alive:</div>
+      title: T('hearts.out.title'),
+      html: `<div class="sub" style="margin-bottom:12px">${T('hearts.out.body')}</div>
              <div class="hintbox show" style="display:block">💡 ${esc(tip)}</div>`,
-      buttons: [{ label: '💪 Got it — one mercy heart', primary: true, onClick: () => { hearts = 1; renderHearts(); } }]
+      buttons: [{ label: T('hearts.out.btn'), primary: true, onClick: () => { hearts = 1; renderHearts(); } }]
     });
   }
 
@@ -218,11 +220,11 @@
     const nxt = nextRankFor(save.xp);
     $('#rank-name').textContent = `${r.icon} ${r.name}`;
     $('#xp-text').textContent = `${save.xp} XP`;
-    let pct = 100, txt = 'MAX';
+    let pct = 100, txt = T('xp.max');
     if (nxt) {
       const span = nxt.xp - r.xp;
       pct = Math.min(100, Math.round(((save.xp - r.xp) / span) * 100));
-      txt = `${nxt.xp - save.xp} XP → ${nxt.name}`;
+      txt = T('xp.toNext', { n: nxt.xp - save.xp, rank: nxt.name });
     }
     $('#xp-fill').style.width = pct + '%';
     $('#xp-fill').title = txt;
@@ -238,7 +240,7 @@
     const els = [$('#combo-map'), $('#combo-level')];
     for (const el of els) {
       if (save.combo >= 2) {
-        el.textContent = `🔥 ${save.combo} streak`;
+        el.textContent = T('combo.streak', { n: save.combo });
         el.classList.add('show');
       } else el.classList.remove('show');
     }
@@ -259,15 +261,15 @@
     $('#title-stats').innerHTML = done === 0 ? '' : `
       <span class="stat-chip">${r.icon} <b>${esc(r.name)}</b></span>
       <span class="stat-chip">⭐ <b>${save.xp}</b> XP</span>
-      <span class="stat-chip">✅ <b>${done}</b>/${TOTAL_LEVELS} levels</span>
-      <span class="stat-chip">🌟 <b>${stars}</b> stars</span>`;
+      <span class="stat-chip">✅ <b>${T('title.stats.levels', { done, total: TOTAL_LEVELS })}</b></span>
+      <span class="stat-chip">🌟 <b>${T('title.stats.stars', { n: stars })}</b></span>`;
     $('#btn-continue').style.display = done > 0 ? '' : 'none';
     const bubble = $('#title-bubble');
     const lines = done === 0
-      ? `Sssso… you want to learn <b>Python</b>? I'm <b>Pip</b> — your guide. ${TOTAL_LEVELS} levels, 10 worlds, one Great Bug. Ready?`
+      ? T('title.bubble.new', { levels: TOTAL_LEVELS })
       : done === TOTAL_LEVELS
-        ? `You did it! <b>Serpent Master</b>! 🎉 Come play in the Sandbox any time.`
-        : `Welcome back! <b>${TOTAL_LEVELS - done}</b> levels to go. I smell a streak coming on… 🔥`;
+        ? T('title.bubble.allDone')
+        : T('title.bubble.welcomeBack', { n: TOTAL_LEVELS - done });
     bubble.innerHTML = lines;
   }
 
@@ -294,7 +296,7 @@
     db.classList.toggle('done', isDone);
     const q = D.DAILY[dailyIndex()];
     $('#daily-q').textContent = q.q;
-    $('#btn-daily').textContent = isDone ? 'Done ✓' : 'Play';
+    $('#btn-daily').textContent = isDone ? T('map.daily.done') : T('map.daily.play');
     $('#btn-daily').disabled = isDone;
 
     const host = $('#worlds');
@@ -328,7 +330,7 @@
             <div class="world-name">${w.name} ${unlocked ? '' : '🔒'}</div>
             <div class="world-blurb">${w.blurb}</div>
           </div>
-          <div class="world-progress">${doneCount}/${w.levels.length} done
+          <div class="world-progress">${T('map.worldDone', { done: doneCount, total: w.levels.length })}
             <div class="wbar"><div class="wbarfill" style="width:${(doneCount / w.levels.length) * 100}%"></div></div>
           </div>
         </div>
@@ -460,7 +462,7 @@
   function openLevel(wi, li) {
     const world = D.WORLDS[wi];
     const level = world.levels[li];
-    cur = { wi, li, world, level, attempts: 0, hintsUsed: 0, quizFirst: true };
+    cur = { wi, li, world, level, attempts: 0, hintsUsed: 0, quizFirst: true, quizDone: false };
 
     $('#level-crumb').textContent = `${world.emoji} ${world.name} — ${level.title}`;
     $('#task-text').innerHTML = md(level.task);
@@ -481,7 +483,7 @@
     $('#run-row').style.display = level.type === 'quiz' ? 'none' : '';
 
     // console reset
-    setConsole('', 'Run your program to see its output here.', '');
+    setConsole('', T('console.idle'), '');
     $('#attempts-note').textContent = '';
 
     // type-specific setup
@@ -519,21 +521,18 @@
 
   function pickBubble(level) {
     const bubbles = [
-      'Read the mission closely — the expected output is your target! 🎯',
-      'Small steps: write one or two lines, then run. Run early, run often!',
-      'Psst — the expected output box shows exactly what to produce.',
-      'Stuck? The hint button is not a defeat, it\'s a shortcut to wisdom. 💡'
+      T('bubble.mission1'), T('bubble.mission2'), T('bubble.mission3'), T('bubble.mission4')
     ];
-    if (level.type === 'quiz') return 'No coding needed here — pick the answer and read the explanation! 🤔';
-    if (level.type === 'arrange') return 'Tap the pieces in order. Indentation matters — the lines remember their spaces!';
-    if (level.type === 'fill') return 'Tap a blank, then tap the chip that fits. Then press Run!';
+    if (level.type === 'quiz') return T('bubble.quiz');
+    if (level.type === 'arrange') return T('bubble.arrange');
+    if (level.type === 'fill') return T('bubble.fill');
     return bubbles[Math.floor(Math.random() * bubbles.length)];
   }
 
   function resetHintUi() {
     $('#hintbox').classList.remove('show');
     $('#btn-hint').disabled = false;
-    $('#btn-hint').textContent = '💡 Hint';
+    $('#btn-hint').textContent = T('level.hintBtn');
     cur.hintIdx = 0;
   }
 
@@ -548,7 +547,7 @@
       setMood('think');
       Sfx.click();
       if (cur.hintIdx >= hints.length) $('#btn-hint').disabled = true;
-      else $('#btn-hint').textContent = '💡 Another hint';
+      else $('#btn-hint').textContent = T('level.anotherHint');
     }
   }
 
@@ -571,7 +570,7 @@
     const body = $('#console-body');
     body.className = 'console-body' + (kind ? ' ' + kind : '');
     body.innerHTML = esc(text) + (extraHtml || '');
-    $('#console-state').textContent = kind === 'ok' ? '✓ success' : kind === 'err' ? '✗ error' : '';
+    $('#console-state').textContent = kind === 'ok' ? T('console.success') : kind === 'err' ? T('console.error') : '';
   }
 
   function appendConsole(html) {
@@ -598,10 +597,9 @@
         if (i === level.answer) {
           b.classList.add('correct');
           [...opts.children].forEach(x => { if (x !== b) x.disabled = true; });
-          $('#quiz-explain').innerHTML = '<b>💡 Why:</b> ' + esc(level.explain);
-          $('#quiz-explain').classList.add('show');
-          $('#btn-quiz-done').style.display = '';
+          revealQuizAnswer(level);
           Sfx.ok();
+          cur.quizDone = true;
           if (cur.quizFirst) {
             save.quizFirstTry++;
             if (save.quizFirstTry >= 5) award('quiz_ace');
@@ -615,12 +613,24 @@
           save.combo = 0; renderCombo();
           Sfx.bad();
           setMood('sad');
-          say('Not quite! Read the options again — you\'ve got this. 💪');
-          setConsole('err', 'Not the right answer — try again!', '');
+          say(T('quiz.wrongBubble'));
+          setConsole('err', T('quiz.wrongConsole'), '');
         }
       });
       opts.appendChild(b);
     });
+    if (cur.quizDone) {                       // language switch: restore solved state
+      const correct = opts.children[level.answer];
+      if (correct) { correct.classList.add('correct'); correct.disabled = true; }
+      [...opts.children].forEach(x => { x.disabled = true; });
+      revealQuizAnswer(level);
+    }
+  }
+
+  function revealQuizAnswer(level) {
+    $('#quiz-explain').innerHTML = '<b>' + T('quiz.why') + '</b>' + esc(level.explain);
+    $('#quiz-explain').classList.add('show');
+    $('#btn-quiz-done').style.display = '';
   }
   $('#btn-quiz-done').addEventListener('click', () => {
     Sfx.click();
@@ -641,7 +651,7 @@
     const pool = $('#arrange-pool');
     area.innerHTML = '';
     if (!cur.arrangeSelected.length) {
-      area.innerHTML = '<div class="empty-note">Tap pieces below to build the program…</div>';
+      area.innerHTML = `<div class="empty-note">${esc(T('arrange.empty'))}</div>`;
     }
     cur.arrangeSelected.forEach((line, i) => {
       const el = document.createElement('div');
@@ -755,7 +765,7 @@
       appendConsole(`\n<span style="color:#5b6a92">⌨️ ${esc(promptText || '')}</span>\n<span style="color:#8b96b8">   ↳ "${esc(v)}"</span>\n`);
       return v;
     }
-    appendConsole(`\n<span style="color:#5b6a92">⌨️ ${esc(promptText || '')} (no more input provided)</span>\n`);
+    appendConsole(`\n<span style="color:#5b6a92">⌨️ ${esc(promptText || '')} ${esc(T('input.noMore'))}</span>\n`);
     return null;
   }
 
@@ -793,7 +803,7 @@
       }).join('') + '\n';
     }
     cur.attempts++;
-    $('#attempts-note').textContent = cur.attempts > 1 ? `attempt ${cur.attempts}` : '';
+    $('#attempts-note').textContent = cur.attempts > 1 ? T('level.attempt', { n: cur.attempts }) : '';
 
     const runBtn = $('#btn-run');
     runBtn.classList.add('running');
@@ -826,14 +836,14 @@
       checkAchAfterRun();
 
       // show the program's real output in the console (even before checks)
-      setConsole('ok', result.output || '(no output — did you print anything?)', '');
+      setConsole('ok', result.output || T('run.noOutput'), '');
 
       // ---------- check ----------
       if (level.expectedShow === false) {
         // turtle world: judge via check(ops)
         const ok = !level.check || level.check(ops);
         if (ok) succeedRun();
-        else failRun({ kind: 'turtle', msg: 'The turtle needs to follow the mission more closely — check the task again!' });
+        else failRun({ kind: 'turtle', msg: T('fail.turtle') });
         return;
       }
 
@@ -854,7 +864,7 @@
 
     if (kind === 'error') {
       const e = error;
-      const friendly = FRIENDLY[e.type] || 'Check your code and try again!';
+      const friendly = friendlyFor(e.type);
       setConsole('err',
         `${outputDisplay('')}`,
         `<span class="errbadge">${esc(e.type)}</span>${esc(e.msg)} ${e.line ? `<span style="color:#5b6a92">(line ${e.line})</span>` : ''}
@@ -862,52 +872,28 @@
       say(pickFailBubble(e.type));
     } else if (kind === 'mismatch') {
       setConsole('err',
-        `Your program ran, but the output doesn't match yet.
-`,
+        T('fail.mismatchLead'),
         `<div class="diffbox">
-          <div class="want"><div class="dt">🎯 Expected</div><pre style="margin:0;font-family:inherit;white-space:pre-wrap">${esc(want)}</pre></div>
-          <div class="got"><div class="dt">🖥 You got</div><pre style="margin:0;font-family:inherit;white-space:pre-wrap">${esc(got || '(nothing)')}</pre></div>
+          <div class="want"><div class="dt">${esc(T('fail.expected'))}</div><pre style="margin:0;font-family:inherit;white-space:pre-wrap">${esc(want)}</pre></div>
+          <div class="got"><div class="dt">${esc(T('fail.got'))}</div><pre style="margin:0;font-family:inherit;white-space:pre-wrap">${esc(got || T('fail.nothing'))}</pre></div>
         </div>`);
-      say('So close! Compare your output with the expected one — the difference is hiding in plain sight. 🔍');
+      say(T('fail.mismatchBubble'));
     } else {
-      setConsole('err', msg || 'Not quite there yet.', '');
-      say(msg || 'Not quite — check the mission card on the left!');
+      setConsole('err', msg || T('fail.generic'), '');
+      say(msg || T('fail.genericBubble'));
     }
   }
 
   function pickFailBubble(type) {
-    const map = {
-      NameError: 'Python met a name it doesn\'t know. Spelling trap, or used before created?',
-      SyntaxError: 'Python can\'t even read that line — hunt for missing colons, commas or quotes!',
-      IndentationError: 'The spacing police! Indent lines inside if/for/def with 4 spaces.',
-      TypeError: 'Type clash! Maybe you\'re adding text to a number — f-strings fix that.',
-      ZeroDivisionError: 'Dividing by zero breaks the universe (and Python).',
-      KeyError: 'That key isn\'t in the dictionary — .get() is the safe way.',
-      IndexError: 'That position doesn\'t exist. Indexes start at 0!',
-      ValueError: 'The value doesn\'t fit — int() needs digits, for example.',
-      TimeLimit: 'Infinite loop alert! Make sure your while condition can become False.',
-      RecursionError: 'A function that never stops calling itself… give it a base case!',
-      OutputLimit: 'That\'s a LOT of printing. Check your loop conditions!'
-    };
-    return map[type] || 'Hmm, Python didn\'t like that. Read the error — it usually points right at the problem.';
+    return T('fail.bubble.' + type, null) !== ('fail.bubble.' + type)
+      ? T('fail.bubble.' + type)
+      : T('fail.bubble.other');
   }
 
-  const FRIENDLY = {
-    NameError: 'Did you spell the name correctly? Create variables before using them.',
-    SyntaxError: 'Check for a missing colon (:), comma, quote or bracket on/above that line.',
-    IndentationError: 'Indent lines inside blocks with exactly 4 spaces.',
-    TypeError: 'You may be mixing types — convert with str() / int(), or use an f-string.',
-    ZeroDivisionError: 'Division by zero! Guard it with an if.',
-    KeyError: 'Use .get(key, default) to read a key that might be missing.',
-    IndexError: 'That index is out of range — lists have len(list) items, starting at 0.',
-    ValueError: 'The value can\'t be converted — int("12") works, int("hi") doesn\'t.',
-    TimeLimit: 'Infinite loop! Make sure the while condition eventually becomes False.',
-    RecursionError: 'Your function calls itself forever — add a stopping condition.',
-    ImportError: 'Only random, math and turtle are available here.',
-    EOFError: 'input() ran out of provided answers.',
-    AttributeError: 'That method name doesn\'t exist for this type — check spelling.',
-    OutputLimit: 'Your program printed too much — check your loops.'
-  };
+  function friendlyFor(type) {
+    const key = 'friendly.' + type;
+    return T(key) !== key ? T(key) : T('friendly.fallback');
+  }
 
   function outputDisplay(s) { return s; }
 
@@ -956,7 +942,7 @@
   }
 
   function pickWinBubble() {
-    const lines = ['Ssspectacular! 🎉', 'You\'re getting scary good at this! 🐍', 'That\'s the way — clean and correct!', 'Brilliant! The Great Bug fears you now.'];
+    const lines = [T('win.bubble1'), T('win.bubble2'), T('win.bubble3'), T('win.bubble4')];
     return lines[Math.floor(Math.random() * lines.length)];
   }
 
@@ -969,7 +955,7 @@
       if (w.id === 'w10') award('bugslayer');
       const perfect = w.levels.every(l => (levelState(l.id)?.stars || 0) === 3);
       if (perfect) award('perfect_world');
-      toast(w.emoji, 'World complete!', `${w.name} — every level cleared!`, true);
+      toast(w.emoji, T('world.complete'), T('world.complete.desc', { name: w.name }), true);
       Confetti.burst(220);
     }
   }
@@ -983,17 +969,17 @@
 
   function showSuccessModal({ stars, xp, base, starBonus, comboBonus, isLast, hasNext }) {
     const modal = $('#modal-success');
-    $('#success-title').textContent = isLast ? 'ADVENTURE COMPLETE! 🏆' : 'Level complete!';
+    $('#success-title').textContent = isLast ? T('success.complete') : T('success.title');
     const st = levelState(cur.level.id);
-    $('#success-sub').textContent = `“${cur.level.title}” — ${'★'.repeat(st.stars)}${'☆'.repeat(3 - st.stars)}`;
+    $('#success-sub').textContent = T('success.sub', { title: cur.level.title, stars: '★'.repeat(st.stars) + '☆'.repeat(3 - st.stars) });
     $$('#modal-success .star').forEach((s, i) => {
       s.classList.remove('lit');
       if (i < st.stars) setTimeout(() => { s.classList.add('lit'); Sfx.star(); }, 150 + i * 260);
     });
     $('#xp-gain').textContent = `+${xp} XP`;
-    const bits = [`${base} base`];
-    if (starBonus) bits.push(`+${starBonus} stars`);
-    if (comboBonus) bits.push(`+${comboBonus} 🔥 streak`);
+    const bits = [T('xp.base', { n: base })];
+    if (starBonus) bits.push(T('xp.starBonus', { n: starBonus }));
+    if (comboBonus) bits.push(T('xp.comboBonus', { n: comboBonus }));
     $('#xp-detail').textContent = bits.join(' · ');
 
     // finale certificate
@@ -1001,24 +987,15 @@
     if (isLast) {
       const r = rankFor(save.xp);
       cert.style.display = '';
-      cert.textContent =
-`╔═══════════════════════════════════════════╗
-║      🐍  LEARNPY CERTIFICATE  🐍          ║
-║                                           ║
-║   ${('"' + cur.world.name + '"').padEnd(41)}║
-║                                           ║
-║   Levels cleared ....... ${String(TOTAL_LEVELS).padStart(2)} / ${TOTAL_LEVELS}         ║
-║   Final rank ........... ${r.name.slice(0, 22).padEnd(22)} ║
-║   Total XP ............. ${String(save.xp).padStart(5)}            ║
-║   Best streak .......... ${String(save.bestCombo).padStart(5)}            ║
-║   Achievements ......... ${String(save.ach.length).padStart(2)} / ${D.ACHIEVEMENTS.length}          ║
-║                                           ║
-║   The Great Bug has been DEFEATED.        ║
-║   You write real Python now. Go build!    ║
-╚═══════════════════════════════════════════╝`;
+      cert.textContent = T('success.certificate', {
+        world: cur.world.name,
+        levels: TOTAL_LEVELS, total: TOTAL_LEVELS,
+        rank: r.name, xp: save.xp, streak: save.bestCombo,
+        ach: save.ach.length, achTotal: D.ACHIEVEMENTS.length
+      });
     } else cert.style.display = 'none';
 
-    $('#btn-next').textContent = hasNext ? 'Next level →' : (isLast ? 'Back to map 🗺️' : 'Back to map 🗺️');
+    $('#btn-next').textContent = hasNext ? T('success.next') : T('success.backToMap');
     modal.classList.add('show');
   }
 
@@ -1059,6 +1036,7 @@
         Sfx.click();
       });
     }
+    refreshSandboxExamples();
     showScreen('screen-sandbox');
   }
   function runSandbox() {
@@ -1072,11 +1050,11 @@
       if (!sb.turtle) { sb.turtle = makeTurtle(panel); const t = turtleModuleFor(sb.turtle); sb.mod = t.mod; sb.turtleNames = t.names; }
       sb.turtle.reset(false);
     } else if (sb.turtle) sb.turtle.reset(false);
-    $('#btn-toggle-turtle').textContent = panel.style.display === 'none' ? '🐢 Show turtle' : '🐢 Hide turtle';
+    $('#btn-toggle-turtle').textContent = panel.style.display === 'none' ? T('sandbox.showTurtle') : T('sandbox.hideTurtle');
 
     setTimeout(() => {
       const result = Py.run(code, {
-        inputFn: p => { const v = window.prompt(p || 'input()'); return v === null ? '' : v; },
+        inputFn: p => { const v = window.prompt(p || T('sandbox.inputPrompt')); return v === null ? '' : v; },
         maxSteps: 600000,
         modules: { turtle: sb.mod || undefined },
         globalNames: sb.turtleNames || undefined
@@ -1089,13 +1067,13 @@
         const e = result.error;
         body.className = 'console-body err';
         body.innerHTML = `<span class="errbadge">${esc(e.type)}</span>${esc(e.msg)} ${e.line ? `<span style="color:#5b6a92">(line ${e.line})</span>` : ''}
-<span class="errline">💡 ${esc(FRIENDLY[e.type] || 'Check your code and try again!')}</span>`;
-        $('#console-state-sandbox').textContent = '✗ error';
+<span class="errline">💡 ${esc(friendlyFor(e.type))}</span>`;
+        $('#console-state-sandbox').textContent = T('console.error');
         Sfx.bad();
       } else {
         body.className = 'console-body ok';
-        body.textContent = result.output || '(program finished — no output)';
-        $('#console-state-sandbox').textContent = '✓ success';
+        body.textContent = result.output || T('sandbox.noOutput');
+        $('#console-state-sandbox').textContent = T('console.success');
         Sfx.ok();
         if (wantsTurtle) sb.turtle.whenIdle(() => {}, 15000);
       }
@@ -1111,7 +1089,7 @@
       const t = turtleModuleFor(sb.turtle);
       sb.mod = t.mod; sb.turtleNames = t.names;
     }
-    $('#btn-toggle-turtle').textContent = show ? '🐢 Hide turtle' : '🐢 Show turtle';
+    $('#btn-toggle-turtle').textContent = show ? T('sandbox.hideTurtle') : T('sandbox.showTurtle');
     Sfx.click();
   });
 
@@ -1131,7 +1109,7 @@
         if (i === q.answer) {
           b.classList.add('correct');
           [...opts.children].forEach(x => { if (x !== b) x.disabled = true; });
-          $('#daily-modal-explain').innerHTML = '<b>💡 Why:</b> ' + esc(q.explain);
+          $('#daily-modal-explain').innerHTML = '<b>' + T('quiz.why') + '</b>' + esc(q.explain);
           $('#daily-modal-explain').classList.add('show');
           if (!(save.daily.done && save.daily.date === todayStr())) {
             save.daily = { date: todayStr(), done: true };
@@ -1156,28 +1134,38 @@
   $('#btn-daily-close').addEventListener('click', () => $('#modal-daily').classList.remove('show'));
 
   /* ============================ settings ================================ */
+  function refreshSettingsUi() {
+    $('#btn-sound-toggle').textContent = save.sound ? T('common.on') : T('common.off');
+    $('#btn-anim-toggle').textContent = save.anim ? T('common.on') : T('common.off');
+    const sel = $('#lang-select');
+    if (sel) sel.value = I18N.getLang();
+  }
   function openSettings() {
-    $('#btn-sound-toggle').textContent = save.sound ? 'On' : 'Off';
-    $('#btn-anim-toggle').textContent = save.anim ? 'On' : 'Off';
+    refreshSettingsUi();
     $('#modal-settings').classList.add('show');
   }
   $('#btn-settings-close').addEventListener('click', () => $('#modal-settings').classList.remove('show'));
   $('#btn-sound-toggle').addEventListener('click', () => {
     save.sound = !save.sound; persist();
-    $('#btn-sound-toggle').textContent = save.sound ? 'On' : 'Off';
+    $('#btn-sound-toggle').textContent = save.sound ? T('common.on') : T('common.off');
     Sfx.click();
   });
   $('#btn-anim-toggle').addEventListener('click', () => {
     save.anim = !save.anim; persist();
-    $('#btn-anim-toggle').textContent = save.anim ? 'On' : 'Off';
+    $('#btn-anim-toggle').textContent = save.anim ? T('common.on') : T('common.off');
+  });
+  $('#lang-select').addEventListener('change', e => {
+    I18N.setLang(e.target.value);
+    applyLanguage();
+    Sfx.click();
   });
   $('#btn-reset-progress').addEventListener('click', () => {
     showInfoModal({
-      title: 'Reset everything?',
-      html: '<div class="sub">This wipes all XP, stars and achievements. There is no undo.</div>',
+      title: T('reset.title'),
+      html: `<div class="sub">${T('reset.body')}</div>`,
       buttons: [
-        { label: 'Cancel' },
-        { label: '🗑️ Yes, reset', primary: false, danger: true, onClick: () => { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} location.reload(); } }
+        { label: T('reset.cancel') },
+        { label: T('reset.confirm'), primary: false, danger: true, onClick: () => { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} location.reload(); } }
       ]
     });
   });
@@ -1196,7 +1184,7 @@
     const inner = host.querySelector('#modal-info-inner');
     inner.innerHTML = `<h2>${esc(title)}</h2>${html}<div class="modal-btns"></div>`;
     const btnRow = inner.querySelector('.modal-btns');
-    for (const b of buttons || [{ label: 'OK', primary: true }]) {
+    for (const b of buttons || [{ label: T('common.ok'), primary: true }]) {
       const el = document.createElement('button');
       el.className = 'btn' + (b.primary ? ' primary' : '') + (b.danger ? '' : '');
       el.style.cssText = b.danger ? 'color:var(--bad);border-color:rgba(251,113,133,.4)' : '';
@@ -1205,6 +1193,53 @@
       btnRow.appendChild(el);
     }
     host.classList.add('show');
+  }
+
+  /* ============================ language ================================ */
+  function refreshSandboxExamples() {
+    const sel = $('#sandbox-examples');
+    if (!sel || !sel.options.length) return;
+    [...sel.options].forEach((o, i) => {
+      if (D.SANDBOX_EXAMPLES[i]) o.textContent = D.SANDBOX_EXAMPLES[i].name;
+    });
+  }
+
+  function refreshLevelTexts() {
+    if (!cur) return;
+    cur.world = D.WORLDS[cur.wi];
+    cur.level = cur.world.levels[cur.li];
+    const level = cur.level;
+    $('#level-crumb').textContent = `${cur.world.emoji} ${cur.world.name} — ${level.title}`;
+    $('#task-text').innerHTML = md(level.task || '');
+    $('#level-bubble').innerHTML = pickBubble(level);
+    const showExp = level.expectedShow !== false && level.expected;
+    $('#expected-box').style.display = showExp ? '' : 'none';
+    if (showExp) $('#expected-pre').textContent = level.expected;
+    const hints = level.hints || [];
+    if (hints.length && cur.hintIdx > 0) {
+      $('#hint-text').textContent = hints[Math.min(cur.hintIdx, hints.length) - 1];
+      $('#hintbox').classList.add('show');
+      $('#btn-hint').disabled = cur.hintIdx >= hints.length;
+      $('#btn-hint').textContent = cur.hintIdx >= hints.length ? T('level.hintBtn') : T('level.anotherHint');
+    } else {
+      $('#hintbox').classList.remove('show');
+      $('#btn-hint').disabled = false;
+      $('#btn-hint').textContent = T('level.hintBtn');
+    }
+    if (level.type === 'quiz') renderQuiz(level);
+  }
+
+  function applyLanguage() {
+    D = I18N.bundle(RawD);
+    I18N.applyStatic();
+    refreshSettingsUi();
+    renderTitle();
+    updateXpUi();
+    renderHearts();
+    renderCombo();
+    if ($('#screen-map').classList.contains('active')) renderMap();
+    if ($('#screen-level').classList.contains('active')) refreshLevelTexts();
+    if ($('#screen-sandbox').classList.contains('active')) refreshSandboxExamples();
   }
 
   /* ============================ navigation ============================== */
@@ -1253,6 +1288,11 @@
 
   /* ============================ boot ==================================== */
   function init() {
+    I18N.setLang(I18N.getLang());     // detect + persist + set <html lang>
+    D = I18N.bundle(RawD);
+    I18N.applyStatic();
+    I18N.fillLangSelect($('#lang-select'));
+    refreshSettingsUi();
     Confetti.init();
     spawnGlyphs();
     renderTitle();

@@ -45,7 +45,7 @@
 
     this.skipBtn = document.createElement('button');
     this.skipBtn.className = 'turtle-skip';
-    this.skipBtn.textContent = '⏩ Skip drawing';
+    this.skipBtn.textContent = (root.LearnPyI18N && root.LearnPyI18N.t('turtle.skip')) || '⏩ Skip drawing';
     this.skipBtn.addEventListener('click', () => this.finishAll());
     container.appendChild(this.skipBtn);
     this.skipBtn.style.display = 'none';

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LearnPy 🐍 — Learn Python by Playing</title>
+<title data-i18n="app.title">LearnPy 🐍 — Learn Python by Playing</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🐍</text></svg>">
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -16,7 +16,7 @@
 <section id="screen-title" class="screen active">
   <div class="title-inner">
     <div class="mascot-row">
-      <div class="bubble" id="title-bubble">Sssso… you want to learn <b>Python</b>? I'm <b>Pip</b> — your guide. 64 levels, 10 worlds, one Great Bug. Ready?</div>
+      <div class="bubble" id="title-bubble" data-i18n-html="title.bubble.default">Sssso… you want to learn <b>Python</b>? I'm <b>Pip</b> — your guide. 65 levels, 10 worlds, one Great Bug. Ready?</div>
       <svg class="mascot-svg" id="mascot-title" viewBox="0 0 80 80">
         <ellipse cx="40" cy="46" rx="22" ry="26" fill="#34d399" stroke="#065f46" stroke-width="2.5"/>
         <ellipse cx="40" cy="46" rx="11" ry="14" fill="none" stroke="#065f46" stroke-width="2"/>
@@ -29,12 +29,12 @@
       </svg>
     </div>
     <h1 class="logo grad-text">LearnPy</h1>
-    <p class="tagline">Learn <b>real Python</b> by playing — 10 worlds, 64 levels,<br>XP, streaks and a final boss. 🐍</p>
+    <p class="tagline" data-i18n-html="title.tagline">Learn <b>real Python</b> by playing — 10 worlds, 65 levels,<br>XP, streaks and a final boss. 🐍</p>
     <div class="title-buttons">
-      <button class="btn primary" id="btn-start">▶&nbsp; Start Adventure</button>
-      <button class="btn" id="btn-continue" style="display:none">⏩&nbsp; Continue</button>
-      <button class="btn" id="btn-sandbox">🧪&nbsp; Sandbox</button>
-      <button class="btn ghost" id="btn-settings">⚙️</button>
+      <button class="btn primary" id="btn-start" data-i18n="title.start">▶&nbsp; Start Adventure</button>
+      <button class="btn" id="btn-continue" style="display:none" data-i18n="title.continue">⏩&nbsp; Continue</button>
+      <button class="btn" id="btn-sandbox" data-i18n="title.sandbox">🧪&nbsp; Sandbox</button>
+      <button class="btn ghost" id="btn-settings" data-i18n-title="title.settings" title="Settings">⚙️</button>
     </div>
     <div class="title-stats" id="title-stats"></div>
   </div>
@@ -46,22 +46,22 @@
     <span class="brand grad-text" id="brand-map">🐍 LearnPy</span>
     <span class="spacer"></span>
     <span class="combo" id="combo-map"></span>
-    <span class="hearts" id="hearts-map" title="Hearts: lost on failed runs, regained on wins"></span>
+    <span class="hearts" id="hearts-map" data-i18n-title="map.hearts" title="Hearts: lost on failed runs, regained on wins"></span>
     <div class="xpwrap">
       <div class="xptop"><span id="rank-name">Byte Rookie</span><b id="xp-text">0 XP</b></div>
       <div class="xpbar"><div class="xpfill" id="xp-fill" style="width:0%"></div></div>
     </div>
-    <button class="iconbtn" id="btn-map-settings" title="Settings">⚙️</button>
+    <button class="iconbtn" id="btn-map-settings" data-i18n-title="map.settings" title="Settings">⚙️</button>
   </header>
   <div class="map-wrap">
     <div class="daily" id="daily-banner">
       <span style="font-size:26px">🎯</span>
       <div>
-        <div class="d-title">Challenge of the Day <span style="color:var(--gold)">+30 XP</span></div>
+        <div class="d-title" data-i18n-html="map.daily.title">Challenge of the Day <span style="color:var(--gold)">+30 XP</span></div>
         <div class="d-q" id="daily-q"></div>
       </div>
       <span class="spacer"></span>
-      <button class="btn small" id="btn-daily">Play</button>
+      <button class="btn small" id="btn-daily" data-i18n="map.daily.play">Play</button>
     </div>
     <div id="worlds"></div>
   </div>
@@ -70,7 +70,7 @@
 <!-- ============================== LEVEL ============================== -->
 <section id="screen-level" class="screen">
   <header class="topbar">
-    <button class="btn small ghost" id="btn-back-map">← Map</button>
+    <button class="btn small ghost" id="btn-back-map" data-i18n="level.back">← Map</button>
     <b id="level-crumb" style="font-size:14px"></b>
     <span class="spacer"></span>
     <span class="combo" id="combo-level"></span>
@@ -93,17 +93,17 @@
               <ellipse cx="20" cy="58" rx="7" ry="4.5" fill="#34d399" stroke="#065f46" stroke-width="2" transform="rotate(30 20 58)"/>
               <ellipse cx="60" cy="58" rx="7" ry="4.5" fill="#34d399" stroke="#065f46" stroke-width="2" transform="rotate(-30 60 58)"/>
             </svg>
-            <div class="bubble" id="level-bubble" style="font-size:13.5px">Read the mission, then write your code!</div>
+            <div class="bubble" id="level-bubble" data-i18n="level.bubble" style="font-size:13.5px">Read the mission, then write your code!</div>
           </div>
           <div class="task-text" id="task-text"></div>
           <div class="expected-box" id="expected-box">
-            <div class="et">🎯 Expected output</div>
+            <div class="et" data-i18n="level.expected">🎯 Expected output</div>
             <pre id="expected-pre"></pre>
           </div>
-          <div class="hintbox" id="hintbox"><div class="ht">💡 Hint</div><div id="hint-text"></div></div>
+          <div class="hintbox" id="hintbox"><div class="ht" data-i18n="level.hintTitle">💡 Hint</div><div id="hint-text"></div></div>
           <div class="action-row">
-            <button class="btn small" id="btn-hint">💡 Hint</button>
-            <button class="btn small ghost" id="btn-reset-code">🔄 Reset code</button>
+            <button class="btn small" id="btn-hint" data-i18n="level.hintBtn">💡 Hint</button>
+            <button class="btn small ghost" id="btn-reset-code" data-i18n="level.resetCode">🔄 Reset code</button>
           </div>
         </div>
       </div>
@@ -117,7 +117,7 @@
             <span class="dots"><i></i><i></i><i></i></span>
             <span id="file-name">main.py</span>
             <span class="spacer"></span>
-            <span><span class="kbd">Tab</span> indent · <span class="kbd">Ctrl</span>+<span class="kbd">Enter</span> run</span>
+            <span data-i18n-html="level.editorKeys"><span class="kbd">Tab</span> indent · <span class="kbd">Ctrl</span>+<span class="kbd">Enter</span> run</span>
           </div>
           <div class="editor-wrap">
             <div class="gutter" id="gutter"></div>
@@ -137,29 +137,29 @@
         </div>
 
         <div id="arrange-panel" class="card" style="display:none">
-          <div class="card-title">🧩 Tap the pieces in the right order</div>
+          <div class="card-title" data-i18n="arrange.title">🧩 Tap the pieces in the right order</div>
           <div class="arrange-area" id="arrange-area"></div>
           <div class="arrange-pool" id="arrange-pool"></div>
           <div class="action-row">
-            <button class="btn small ghost" id="btn-arrange-reset">↩ Start over</button>
-            <button class="btn small ghost" id="btn-arrange-undo">⌫ Undo last</button>
+            <button class="btn small ghost" id="btn-arrange-reset" data-i18n="arrange.startOver">↩ Start over</button>
+            <button class="btn small ghost" id="btn-arrange-undo" data-i18n="arrange.undo">⌫ Undo last</button>
           </div>
         </div>
 
         <div id="fill-panel" class="card" style="display:none">
-          <div class="card-title">✏️ Fill in the blanks</div>
+          <div class="card-title" data-i18n="fill.title">✏️ Fill in the blanks</div>
           <div class="fill-code" id="fill-code"></div>
           <div class="fill-chips" id="fill-chips"></div>
         </div>
 
         <div class="action-row" id="run-row">
-          <button class="btn good runbtn" id="btn-run">▶ Run</button>
+          <button class="btn good runbtn" id="btn-run" data-i18n="run.label">▶ Run</button>
           <span style="align-self:center;color:var(--dim);font-size:13px" id="attempts-note"></span>
         </div>
 
         <div class="console">
-          <div class="console-head">📟 Console <span class="state" id="console-state"></span></div>
-          <div class="console-body" id="console-body">Run your program to see its output here.</div>
+          <div class="console-head"><span data-i18n="console.title">📟 Console</span> <span class="state" id="console-state"></span></div>
+          <div class="console-body" id="console-body" data-i18n="console.idle">Run your program to see its output here.</div>
         </div>
       </div>
 
@@ -170,8 +170,8 @@
 <!-- ============================== SANDBOX ============================== -->
 <section id="screen-sandbox" class="screen">
   <header class="topbar">
-    <button class="btn small ghost" id="btn-sandbox-back">← Title</button>
-    <b style="font-size:14px">🧪 Sandbox — no rules, no grades, pure experiments</b>
+    <button class="btn small ghost" id="btn-sandbox-back" data-i18n="sandbox.back">← Title</button>
+    <b style="font-size:14px" data-i18n="sandbox.bar">🧪 Sandbox — no rules, no grades, pure experiments</b>
     <span class="spacer"></span>
     <select id="sandbox-examples" class="btn small" style="padding:6px 10px"></select>
   </header>
@@ -179,13 +179,13 @@
     <div class="level-grid">
       <div>
         <div class="card">
-          <div class="card-title">🧪 What is the Sandbox?</div>
-          <div class="task-text">A free playground: any Python you like, with <b>turtle graphics</b> included.<br><br>
+          <div class="card-title" data-i18n="sandbox.whatTitle">🧪 What is the Sandbox?</div>
+          <div class="task-text" data-i18n-html="sandbox.whatBody">A free playground: any Python you like, with <b>turtle graphics</b> included.<br><br>
           Try the examples in the dropdown, or write your own masterpiece.<br><br>
           <code>input()</code> pops up a real prompt box.</div>
         </div>
         <div class="card">
-          <div class="card-title">✨ Cheat sheet</div>
+          <div class="card-title" data-i18n="sandbox.cheatTitle">✨ Cheat sheet</div>
           <div class="task-text" style="font-size:13px; line-height:2">
           <code>print(...)</code> · <code>len(x)</code> · <code>range(a,b)</code><br>
           <code>if / elif / else:</code> · <code>while:</code> · <code>for x in ...:</code><br>
@@ -213,12 +213,12 @@
           </div>
         </div>
         <div class="action-row">
-          <button class="btn good runbtn" id="btn-run-sandbox">▶ Run</button>
-          <button class="btn" id="btn-toggle-turtle">🐢 Show turtle</button>
+          <button class="btn good runbtn" id="btn-run-sandbox" data-i18n="sandbox.runLabel">▶ Run</button>
+          <button class="btn" id="btn-toggle-turtle" data-i18n="sandbox.showTurtle">🐢 Show turtle</button>
         </div>
         <div class="console">
-          <div class="console-head">📟 Console <span class="state" id="console-state-sandbox"></span></div>
-          <div class="console-body" id="console-body-sandbox">Run a program to see its output here.</div>
+          <div class="console-head"><span data-i18n="console.title">📟 Console</span> <span class="state" id="console-state-sandbox"></span></div>
+          <div class="console-body" id="console-body-sandbox" data-i18n="sandbox.consoleIdle">Run a program to see its output here.</div>
         </div>
       </div>
     </div>
@@ -228,52 +228,58 @@
 <!-- ============================== OVERLAYS ============================== -->
 <div class="modal-backdrop" id="modal-success">
   <div class="modal">
-    <h2 id="success-title" class="grad-text">Level complete!</h2>
+    <h2 id="success-title" class="grad-text" data-i18n="success.title">Level complete!</h2>
     <div class="sub" id="success-sub"></div>
     <div class="stars-row"><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
     <div class="xp-gain" id="xp-gain">+20 XP</div>
     <div class="xp-detail" id="xp-detail"></div>
     <div class="cert" id="cert-pre" style="display:none"></div>
     <div class="modal-btns">
-      <button class="btn ghost" id="btn-again">↻ Replay</button>
-      <button class="btn primary" id="btn-next">Next level →</button>
+      <button class="btn ghost" id="btn-again" data-i18n="success.replay">↻ Replay</button>
+      <button class="btn primary" id="btn-next" data-i18n="success.next">Next level →</button>
     </div>
   </div>
 </div>
 
 <div class="modal-backdrop" id="modal-settings">
   <div class="modal">
-    <h2>⚙️ Settings</h2>
+    <h2 data-i18n="settings.title">⚙️ Settings</h2>
     <div class="setting-row">
       <span style="font-size:22px">🔊</span>
-      <div><b>Sound effects</b><div class="sub">chimes, fanfares &amp; bleeps</div></div>
+      <div><b data-i18n="settings.sound">Sound effects</b><div class="sub" data-i18n="settings.soundSub">chimes, fanfares &amp; bleeps</div></div>
       <span class="spacer"></span>
       <button class="btn small" id="btn-sound-toggle">On</button>
     </div>
     <div class="setting-row">
       <span style="font-size:22px">🐢</span>
-      <div><b>Turtle animation</b><div class="sub">watch the turtle draw step by step</div></div>
+      <div><b data-i18n="settings.anim">Turtle animation</b><div class="sub" data-i18n="settings.animSub">watch the turtle draw step by step</div></div>
       <span class="spacer"></span>
       <button class="btn small" id="btn-anim-toggle">On</button>
     </div>
     <div class="setting-row">
-      <span style="font-size:22px">🗑️</span>
-      <div><b>Reset progress</b><div class="sub">wipe XP, stars and achievements</div></div>
+      <span style="font-size:22px">🌍</span>
+      <div><b data-i18n="settings.language">Language</b><div class="sub" data-i18n="settings.languageSub">choose your language</div></div>
       <span class="spacer"></span>
-      <button class="btn small" id="btn-reset-progress" style="color:var(--bad);border-color:rgba(251,113,133,.4)">Reset</button>
+      <select id="lang-select" class="btn small" style="padding:6px 10px"></select>
     </div>
-    <div class="sub" style="margin-top:14px">LearnPy v1.0 · a self-contained Python adventure.<br>Progress is saved in your browser.</div>
-    <div class="modal-btns"><button class="btn" id="btn-settings-close">Close</button></div>
+    <div class="setting-row">
+      <span style="font-size:22px">🗑️</span>
+      <div><b data-i18n="settings.reset">Reset progress</b><div class="sub" data-i18n="settings.resetSub">wipe XP, stars and achievements</div></div>
+      <span class="spacer"></span>
+      <button class="btn small" id="btn-reset-progress" data-i18n="settings.resetBtn" style="color:var(--bad);border-color:rgba(251,113,133,.4)">Reset</button>
+    </div>
+    <div class="sub" style="margin-top:14px" data-i18n-html="settings.about">LearnPy v1.0 · a self-contained Python adventure.<br>Progress is saved in your browser.</div>
+    <div class="modal-btns"><button class="btn" id="btn-settings-close" data-i18n="settings.close">Close</button></div>
   </div>
 </div>
 
 <div class="modal-backdrop" id="modal-daily">
   <div class="modal">
-    <h2>🎯 Challenge of the Day</h2>
+    <h2 data-i18n="daily.title">🎯 Challenge of the Day</h2>
     <div class="quiz-q" id="daily-modal-q" style="margin:14px 0"></div>
     <div class="quiz-opts" id="daily-modal-opts"></div>
     <div class="quiz-explain" id="daily-modal-explain"></div>
-    <div class="modal-btns"><button class="btn" id="btn-daily-close">Close</button></div>
+    <div class="modal-btns"><button class="btn" id="btn-daily-close" data-i18n="daily.close">Close</button></div>
   </div>
 </div>
 
@@ -283,6 +289,8 @@
 <script src="js/pyengine.js"></script>
 <script src="js/turtle.js"></script>
 <script src="js/levels.js"></script>
+<script src="js/i18n-levels.js"></script>
+<script src="js/i18n.js"></script>
 <script src="js/game.js"></script>
 </body>
 </html>
