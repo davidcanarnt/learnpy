@@ -208,6 +208,11 @@ h1, h2, h3 { margin: 0; font-weight: 800; }
 .daily .d-q { color: var(--dim); font-size: 14px; margin-top: 2px; }
 .daily .spacer { flex: 1; }
 .daily.done { opacity: .55; filter: saturate(.4); }
+.cert-promo {
+  border-color: rgba(34,211,238,.4);
+  background: linear-gradient(90deg, rgba(34,211,238,.12), rgba(167,139,250,.10));
+  margin-top: 4px; margin-bottom: 8px;
+}
 
 .world-card {
   border: 1px solid var(--border);

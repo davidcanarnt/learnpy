@@ -64,6 +64,14 @@
       <button class="btn small" id="btn-daily" data-i18n="map.daily.play">Play</button>
     </div>
     <div id="worlds"></div>
+    <div class="daily cert-promo" id="cert-promo">
+      <span style="font-size:28px">🎓</span>
+      <div>
+        <div class="d-title" data-i18n="map.cert.title">Finish the game, earn your certificate</div>
+        <div class="d-q" data-i18n="map.cert.desc">Beat all 10 worlds and download a personalized PDF certificate with your name.</div>
+      </div>
+      <span class="spacer"></span>
+    </div>
   </div>
 </section>
 
@@ -237,6 +245,7 @@
     <div class="cert" id="cert-pre" style="display:none"></div>
     <div class="modal-btns">
       <button class="btn ghost" id="btn-again" data-i18n="success.replay">↻ Replay</button>
+      <button class="btn primary" id="btn-cert-pdf" data-i18n="success.download" style="display:none">⬇ Download certificate</button>
       <button class="btn primary" id="btn-next" data-i18n="success.next">Next level →</button>
     </div>
   </div>
@@ -245,6 +254,12 @@
 <div class="modal-backdrop" id="modal-settings">
   <div class="modal">
     <h2 data-i18n="settings.title">⚙️ Settings</h2>
+    <div class="setting-row">
+      <span style="font-size:22px">🪪</span>
+      <div><b data-i18n="settings.name">Your name</b><div class="sub" data-i18n="settings.nameSub">shown on your certificate</div></div>
+      <span class="spacer"></span>
+      <input id="player-name" class="btn small" style="padding:6px 10px;min-width:150px" maxlength="60" autocomplete="off">
+    </div>
     <div class="setting-row">
       <span style="font-size:22px">🔊</span>
       <div><b data-i18n="settings.sound">Sound effects</b><div class="sub" data-i18n="settings.soundSub">chimes, fanfares &amp; bleeps</div></div>
@@ -292,6 +307,7 @@
 <script src="js/levels.js"></script>
 <script src="js/i18n-levels.js"></script>
 <script src="js/i18n.js"></script>
+<script src="js/vendor/jspdf.umd.min.js"></script>
 <script src="js/game.js"></script>
 </body>
 </html>
